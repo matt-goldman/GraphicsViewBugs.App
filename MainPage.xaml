@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:GraphicsViewBugs.Controls"
+             x:Class="GraphicsViewBugs.MainPage"
+             BackgroundColor="{DynamicResource SecondaryColor}">
+    <ContentPage.Resources>
+        <controls:Gauge x:Key="gauge"/>
+        <controls:Clip x:Key="clip"/>
+    </ContentPage.Resources>
+    <ScrollView>
+        <VerticalStackLayout Padding="50">
+            <VerticalStackLayout Margin="0,10">
+                <Label Text="In the following graphic, arc has a radius of 100, the line starts at 100 and finishes at 200. The red line should starts at x=100 and finishes at x=200, so should start in the middle of the arc, and end finish at the end. This works as expected on Android, but is wrong on Windows (line starts before the middle and ends after the end). The blue line uses the same code but has the LineTo added twice. Additionally, the edges of the arc are clipped on Windows, but not on Android."
+                       LineBreakMode="WordWrap"
+                       HorizontalOptions="Center"
+                       WidthRequest="700"
+                       Margin="0,0,0,20"/>
+                <GraphicsView Drawable="{StaticResource gauge}"
+                              HorizontalOptions="Center"
+                              VerticalOptions="Center"
+                              WidthRequest="300"
+                              HeightRequest="200"/>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Margin="0,10">
+                <Label Text="In this graphic, a path is drawn with the canvas filled with a gradient. The goal is to fill the path with the gradient to create a filled shape (as you can't currently gradient fill a path). In the control (Controls/Clip.cs), the line `Canvas.ClipTo(path)` is commented. If you uncomment it, the app will crash. On Android, uncommenting he line doesn't make it crash, but it doesn't actually clip either."
+                       LineBreakMode="WordWrap"
+                       HorizontalOptions="Center"
+                       WidthRequest="700"/>
+                <GraphicsView Drawable="{StaticResource clip}"
+                              HorizontalOptions="Center"
+                              VerticalOptions="Center"
+                              WidthRequest="300"
+                              HeightRequest="200"/>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Margin="0,10">
+                <Label Text="This graphic contains a gradient. Changing values like the center and radius causes strange behaviour on Windows, like shear lines at various angles (up to 90 degrees) depending on what values you set for the center and radius. On Android this whole thing doesn't even render at all."
+                       LineBreakMode="WordWrap"
+                       HorizontalOptions="Center"
+                       WidthRequest="700"/>
+
+                <Grid>
+                    <Border Grid.Row="0"
+                        Stroke="Black"
+                        StrokeThickness="5"
+                        Margin="0,20,0,0"
+                        WidthRequest="600"
+                        HeightRequest="600"
+                        HorizontalOptions="Center">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="40"/>
+                        </Border.StrokeShape>
+                        <Border.Background>
+                            <RadialGradientBrush Center="0.95,0.15"
+                                             Radius="0.5">
+                                <GradientStop Color="Green"
+                            Offset="0.1"/>
+                                <GradientStop Color="Red"
+                            Offset="1.0"/>
+                            </RadialGradientBrush>
+                        </Border.Background>
+                    </Border>
+                </Grid>
+            </VerticalStackLayout>
+
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
